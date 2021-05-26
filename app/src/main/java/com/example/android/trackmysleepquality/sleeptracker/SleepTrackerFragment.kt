@@ -65,24 +65,26 @@ class SleepTrackerFragment : Fragment() {
                 ViewModelProvider(
                         this, viewModelFactory).get(SleepTrackerViewModel::class.java)
 
-        // RecycleView
-        val adapter = SleepNightAdapter()
-        binding.sleepList.adapter = adapter
-
         // To use the View Model with data binding, you have to explicitly
         // give the binding object a reference to it.
         binding.sleepTrackerViewModel = sleepTrackerViewModel
 
-        // Specify the current activity as the lifecycle owner of the binding.
-        // This is necessary so that the binding can observe LiveData updates.
-        binding.lifecycleOwner = this
+        // RecycleView
+        val adapter = SleepNightAdapter()
+        binding.sleepList.adapter = adapter
+
 
         // Add an Observer for TextView
         sleepTrackerViewModel.nights.observe(viewLifecycleOwner, Observer {
             it?.let {
-                adapter.data = it
+                adapter.submitList(it)
             }
         })
+
+        // Specify the current activity as the lifecycle owner of the binding.
+        // This is necessary so that the binding can observe LiveData updates.
+//        binding.lifecycleOwner = this
+        binding.setLifecycleOwner(this)
 
         // Add an Observer on the state variable for showing a Snackbar message
         // when the CLEAR button is pressed.
